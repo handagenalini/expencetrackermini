@@ -1,0 +1,84 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="savetolocal(event)">
+    <label for="amount">Amount</label>
+    <input id='amount'type="number" name="amount">
+    <label for="description">description</label>
+    <input id='description'type="text" name="description">
+    <label for="category">Choose category</label>
+    
+    <select id="category" name="category">
+        <option value="fuel">fuel</option>
+        <option value="food">food</option>
+        <option value="electricity">electricity</option>
+        <option value="Movie">Movie</option>
+    </select>
+   
+    <button>add expence</button>
+</form>
+<ul id="listOfUsers"></ul>
+<script>
+    function savetolocal(event){
+        event.preventDefault()
+        const amount=event.target.amount.value
+        const description=event.target.description.value
+        const category=event.target.category.value
+        // localStorage.setItem('name',name)
+        // localStorage.setItem('email',email)
+        // localStorage.setItem('phonenumber',phonenumber)
+        const obj={
+            amount,
+            description,
+            category
+        }
+        localStorage.setItem(obj.description,JSON.stringify(obj))
+        showUserOnScreen(obj)
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    showUserOnScreen(userDetailsObj)
+                }
+            })
+    function showUserOnScreen(user){
+                    const parentNode=document.getElementById('listOfUsers')
+                    const childHTML=`<li id=${user.description}> ${user.amount}-----${user.description}--------${user.category}  
+                        <button onclick=deleteuser('${user.description}')> delete user</button>
+                        <button onclick=edituser('${user.description}','${user.amount}','${user.category}')>edit user</button></li>`
+
+                        parentNode.innerHTML=parentNode.innerHTML+childHTML
+                }
+    function deleteuser(description){
+                console.log(description)
+                localStorage.removeItem(description)
+                removeuserfromscreen(description)
+                }
+    function removeuserfromscreen(description){
+                    const parentNode=document.getElementById('listOfUsers')
+                    const childNodeToBeDeleted=document.getElementById(description)
+                    console.log(childNodeToBeDeleted)
+                    parentNode.removeChild(childNodeToBeDeleted)
+                }
+                function edituser(description,amount,category){
+                    document.getElementById('description').value=description
+                    document.getElementById('amount').value=amount
+                    document.getElementById('category').value=category                
+                }
+ 
+
+</script>
+   
+</body>
+</html>
