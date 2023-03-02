@@ -1,0 +1,149 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="savetolocal(event)">
+    <label for="amount">Amount</label>
+    <input id='amount'type="number" name="amount">
+    <label for="description">description</label>
+    <input id='description'type="text" name="description">
+    <label for="category">Choose category</label>
+    
+    <select id="category" name="category">
+        <option value="fuel">fuel</option>
+        <option value="food">food</option>
+        <option value="electricity">electricity</option>
+        <option value="Movie">Movie</option>
+    </select>
+   
+    <button>add expence</button>
+</form>
+<h4 id="product" >Daily Expences</h4>
+<ul id="listOfUsers"></ul>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+<script>
+    async function savetolocal(event){
+        
+        event.preventDefault()
+        try{
+        const amount=event.target.amount.value
+        const description=event.target.description.value
+        const category=event.target.category.value
+        // localStorage.setItem('name',name)
+        // localStorage.setItem('email',email)
+        // localStorage.setItem('phonenumber',phonenumber)
+        const obj={
+            amount,
+            description,
+            category
+        }
+        
+      
+       const data=await axios.post('https://crudcrud.com/api/20606b51b29a4c4f8cf5dd76bd8318bd/appointmentapp',obj)
+    const items=await data
+    console.log(data)
+        showUserOnScreen(items.data)
+        
+    }catch(err){console.log(err)}
+    }
+    window.addEventListener("DOMContentLoaded", 
+    async () => {
+
+        try{
+        const data= await axios.get('https://crudcrud.com/api/20606b51b29a4c4f8cf5dd76bd8318bd/appointmentapp')
+        const response=await data
+        console.log(response)
+            for(var i =0; i< response.length; i++){
+              showUserOnScreen(res.data[i])
+            }
+        }catch(err){
+        console.log(err)
+        }
+             
+            })
+     function showUserOnScreen(user){
+        
+                    const parentNode=document.getElementById('listOfUsers')
+                    
+                    const childHTML=`<li id=${user._id}> ${user.amount}-----${user.description}--------${user.category}  
+                        <button onclick=deleteuser('${user._id}','${user.amount}')> delete user</button>
+                        <button onclick=edituser('${user.description}','${user.amount}','${user.category}','${user._id}')>edit user</button></li>`
+
+                        parentNode.innerHTML=parentNode.innerHTML+childHTML
+                        addition(user.amount)
+                    }
+                   
+    function deleteuser(userId,amount){
+        axios.delete(`https://crudcrud.com/api/20606b51b29a4c4f8cf5dd76bd8318bd/appointmentapp/${userId}`)
+        .then((res)=>{
+            console.log(res)
+            removeuserfromscreen(userId,amount)
+            console.log(amount)
+        })
+        .catch((err)=>{console.log(err)})
+                // console.log(description)
+                // localStorage.removeItem(description)
+                // removeuserfromscreen(description)
+                }
+      function removeuserfromscreen(userId,userdata){
+        
+                    const parentNode=document.getElementById('listOfUsers')
+                    const childNodeToBeDeleted=document.getElementById(userId)
+                    console.log(childNodeToBeDeleted)
+                    parentNode.removeChild(childNodeToBeDeleted)
+                    minus(userdata)
+                  
+                }
+                function edituser(description,amount,category,userId){
+                    
+                    document.getElementById('description').value=description
+                    document.getElementById('amount').value=amount
+                    document.getElementById('category').value=category 
+                    minus(amount)     
+                    deleteuser(userId) 
+                    console.log(amount,'--------------------')  
+                    // minus(amount) 
+                    
+                  
+                }
+ 
+
+</script>
+<h4 id="add"></h4>
+<script>
+    var prev=0
+
+ function addition(user){
+        
+        prev=parseInt(prev)+parseInt(user)
+     const parentNode=document.getElementById('add')
+
+            
+                    const childHTML=`<h4>Total Expences ${prev}</h4>`
+
+                    parentNode.innerHTML=childHTML
+                   
+        // function minus(userId){
+        // const newamount=prev-user.amount
+        // const childHTML=`<li>total expences ${newamount}</li>`
+        // parentNode.innerHTML=childHTML
+
+    }
+ function minus(userdata){
+    const parentNode=document.getElementById('add')
+        const newamount=prev-userdata
+        const childHTML=`<h4>Total Expences ${newamount}</h4>`
+        parentNode.innerHTML=childHTML
+      
+    }
+    
+</script>
+   
+</body>
+</html>
